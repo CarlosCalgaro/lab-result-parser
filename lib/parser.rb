@@ -1,59 +1,61 @@
 require 'pry'
 require_relative './laboratory_test_result'
-require_relative './laboratory_test_constants'
+require_relative './format_conversor'
 
-# Class used to parse test results given an export file
 class Parser 
 
-  include LaboratoryTestConstants
-  include LaboratoryTestConstants::FileImport
+  DELIMITER = "|"
+  LAB_RESULT_START_TOKEN = "OBX|"
+  LAB_COMMENT_START_TOKEN = "NTE|"
 
-  VERSION = 1.0
+  TEST_TYPES = {
+    C100: "float",
+    C200: "float",
+    A250: "boolean",
+    B250: "nil_3plus"
+  }
 
-  # Read the file and initializes an array with every laboratory test
+
   def initialize(file_path)
     content = File.read(file_path).gsub("\n", "")
-    @laboratory_tests = split_tests(content)
+    @conversor = FormatConversor.new
+    @lab_tests = map_tests(content)
   end 
   
   def mapped_results
-    return_data = []
-    @laboratory_tests.each do |test|
-      test = test.split(LAB_COMMENT_START_TOKEN)
-      test_result = extract_test_result(test.shift)
-      comments = extract_comments(test)
-      return_data.push(
-            LaboratoryTestResult.new(code: test_result[:code], 
-                                     result: test_result[:result], 
-                                     format: test_result[:format], 
-                                     comment: comments)
+    mapped_results = []
+    @lab_tests.map do |test|
+      result = extract_test_result(test.shift)
+      comment = extract_comment(test)
+      LaboratoryTestResult.new(code: result[:code], 
+                               result: result[:result],
+                               format: result[:format],
+                               comment: comment
       )
     end
-    return_data
   end
 
   private 
 
-  #Given a bulk string of tests, returns an array of tests splitten by a delimiter
-  def split_tests(bulk_test_string)
-    array_of_tests = bulk_test_string.split(DELIMITER)  
-    array_of_tests.shift
-    return array_of_tests
+  def map_tests(tests_string)
+    mapped_tests = tests_string.split(LAB_RESULT_START_TOKEN)  
+    mapped_tests.shift
+    return mapped_tests.map{|e| e.split(LAB_COMMENT_START_TOKEN)}
   end
   
-  #Receives a test result string and return the test data formatted
-  def extract_test_result(laboratory_result_string)
-    tokens = laboratory_result_string.split(DELIMITER)
-    return { 
-      code: tokens[1], 
-      result: tokens[2], 
-      format: FORMATS.fetch(tokens[1].to_sym), 
+  def extract_test_result(test_string)
+    test = test_string.split(DELIMITER)
+    code = test[1]
+    result = test[2]
+    format = TEST_TYPES.fetch(code.to_sym)
+    return { format: format,
+             code: code,
+             result: @conversor.convert(result, format)
     }
   end
   
-  # Receive an array of comments string and returns the parsed string
-  def extract_comments(tokens)
-    tokens.collect{|e| e.split(DELIMITER).last}.join("\n")
+  def extract_comment(array_of_comments)
+    return array_of_comments.map{|e| e.split(DELIMITER).last}.join("\n")
   end
 
 end
