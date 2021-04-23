@@ -1,35 +1,29 @@
 # Parser
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/parser`. To experiment with that code, run `bin/console` for an interactive prompt.
+Simple parser that parses lab test results from multiple laboratories. Consists of a format conversor, that converts the results provided by the laboratory to mapped float values, a class LaboratoryTestResult to model the results of the tests and the parser, who reads the file and responds to mapped_results method.
 
-TODO: Delete this and the text above, and describe your gem
+# Dependencies
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'parser'
+Install dependencies:
+```
+    bundle install
 ```
 
-And then execute:
+# Usage
+Require parser.rb file in your project to start using it.
 
-    $ bundle install
+```Ruby
+    file_path = "/path/to/file.txt"
+    parser = Parser.new(file_path)
+    parser.mapped_results # => [...]
+```
 
-Or install it yourself as:
+# Tests
+Tests were written using the rspec framework, you can run them by executing the following command:
 
-    $ gem install parser
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
+```
+    rspec 
+```
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/parser. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/parser/blob/master/CODE_OF_CONDUCT.md).
@@ -37,7 +31,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The software is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Code of Conduct
 

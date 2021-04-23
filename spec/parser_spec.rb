@@ -1,8 +1,4 @@
 RSpec.describe Parser do
-  
-  it 'has a version number' do
-    expect(Parser::VERSION).not_to be nil
-  end
 
   it 'responds to mapped_result' do 
     filename = 'lab_result.txt'
